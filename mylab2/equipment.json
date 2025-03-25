@@ -1,73 +1,68 @@
 {
     "substaion": {
-        "high_voltage": "35 kV",
-        "low_voltage": "10 kV"
+        "high_voltage": "220 kV",
+        "low_voltage": "110 kV"
     },
     "buses": [
         {
             "name": "High Voltage Bus",
-            "voltage": "35 kV",
+            "voltage": "220 kV",
             "sections": [
-                "Section 1",
-                "Section 2"
+                "Left Section",
+                "Right Section"
             ],
-            "section_breaker": "Q0"
+            "main_breakers": ["Q1", "Q2"],
+            "backup_breakers": ["Q1", "Q2"]
         },
         {
             "name": "Low Voltage Bus",
-            "voltage": "10 kV",
+            "voltage": "110 kV",
             "sections": [
                 "Section 1",
                 "Section 2"
             ],
-            "section_breaker": "Q8"
+            "main_breakers": ["Q4", "Q5"],
+            "backup_breakers": ["Q1", "Q2"]
         }
     ],
     "transformers": [
         {
             "name": "TR1",
-            "high_voltage": "35 kV",
-            "low_voltage": "10 kV",
-            "breaker": "Q6"
+            "high_voltage": "220 kV",
+            "low_voltage": "110 kV",
+            "main_breakers": ["Q4"],
+            "backup_breakers": ["Q1"]
         },
         {
             "name": "TR2",
-            "high_voltage": "35 kV",
-            "low_voltage": "10 kV",
-            "breaker": "Q7"
+            "high_voltage": "220 kV",
+            "main_breakers": ["Q5"],
+            "backup_breakers": ["Q2"]
         }
     ],
     "lines": {
         "high_voltage": [
             {
                 "name": "W1",
-                "breaker": "Q1"
+                "main_breakers": ["Q1"],
+                "backup_breakers": ["Q1"]
             },
             {
                 "name": "W2",
-                "breaker": "Q2"
-            },
-            {
-                "name": "W3",
-                "breaker": "Q3"
-            },
-            {
-                "name": "W4",
-                "breaker": "Q4"
-            },
-            {
-                "name": "W5",
-                "breaker": "Q5"
+                "main_breakers": ["Q2"],
+                "backup_breakers": ["Q2"]
             }
         ],
         "low_voltage": [
             {
-                "name": "W6",
-                "breaker": "Q9"
+                "name": "W3",
+                "main_breakers": ["Q7"],
+                "backup_breakers": ["Q4"]
             },
             {
-                "name": "W7",
-                "breaker": "Q10"
+                "name": "W4",
+                "main_breakers": ["Q8"],
+                "backup_breakers": ["Q5"]
             }
         ]
     },
