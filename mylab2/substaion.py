@@ -7,25 +7,25 @@ class Bus(PrimaryEquipment):
         self.__sections = sections
         self.__main_breakers = main_breakers
         self.__backup_breakers = backup_breakers
-        
+
     def set_sections(self, sections):
         self.__sections = sections
-        
+
     def set_main_breakers(self, main_breakers):
         self.__main_breakers = main_breakers
-        
+
     def set_backup_breakers(self, backup_breakers):
         self.__backup_breakers = backup_breakers
-        
+
     def get_sections(self):
         return self.__sections
-        
+
     def get_main_breakers(self):
         return self.__main_breakers
-    
+
     def get_backup_breakers(self):
         return self.__backup_breakers
-    
+
     def get_info(self):
         return f"Bus - {self.get_name()}"
 
@@ -35,26 +35,26 @@ class Line(PrimaryEquipment):
         super().__init__(name, voltage)
         self.__main_breakers = main_breakers
         self.__backup_breakers = backup_breakers
-        
+
     def set_breaker(self, breaker):
         self.__breaker = breaker
-        
+
     def set_main_breakers(self, main_breakers):
         self.__main_breakers = main_breakers
-        
+
     def set_backup_breakers(self, backup_breakers):
         self.__backup_breakers = backup_breakers
-        
+
     def get_main_breakers(self):
         return self.__main_breakers
-    
+
     def get_backup_breakers(self):
         return self.__backup_breakers
-    
+
     def get_info(self):
         return f"Line - {self.get_name()}"
 
-   
+
 class Transformer(PrimaryEquipment):
     def __init__(self, name, high_voltage, low_voltage, main_breakers, backup_breakers):
         super().__init__(name, high_voltage)
@@ -71,7 +71,7 @@ class Transformer(PrimaryEquipment):
     def set_backup_breakers(self, backup_breakers):
         self.__backup_breakers = backup_breakers
         
-    def get_low_voltage(self):
+    def get_voltage(self):
         return self.__low_voltage
         
     def get_main_breakers(self):

@@ -18,8 +18,8 @@
             "name": "Low Voltage Bus",
             "voltage": "110 kV",
             "sections": [
-                "Section 1",
-                "Section 2"
+                "Left Section",
+                "Right Section"
             ],
             "main_breakers": ["Q4", "Q5"],
             "backup_breakers": ["Q1", "Q2"]
@@ -36,6 +36,7 @@
         {
             "name": "TR2",
             "high_voltage": "220 kV",
+            "low_voltage": "110 kV",
             "main_breakers": ["Q5"],
             "backup_breakers": ["Q2"]
         }
@@ -71,7 +72,7 @@
             "name": "Main Protection",
             "type": "Overcurrent",
             "settings": {
-                "current_threshold": 1000,
+                "current_threshold": 10,
                 "failure_probability": 0.2
             }
         },
@@ -79,7 +80,7 @@
             "name": "Backup Protection",
             "type": "Overcurrent",
             "settings": {
-                "current_threshold": 1500,
+                "current_threshold": 8,
                 "failure_probability": 0.05
             }
         }

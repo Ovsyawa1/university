@@ -9,15 +9,15 @@ class PrimaryEquipment(ABC):
     @abstractmethod
     def get_info(self):
         pass
-    
+
     def get_name(self):
         return self.__name
-    
+
     def get_voltage(self):
         return self.__voltage
-    
+
     def set_name(self, name):
         self.__name = name
-        
+
     def set_voltage(self, voltage):
         self.__voltage = voltage

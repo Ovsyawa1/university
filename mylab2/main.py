@@ -53,26 +53,34 @@ transformer2 = Transformer(
 
 # Создание линий высокого напряжения
 hv_lines = [
-    Line(line['name'], config['substaion']['high_voltage'], line['breaker'])
+    Line(
+        line['name'],
+        config['substaion']['high_voltage'],
+        line['main_breakers'],
+        line['backup_breakers'],
+    )
     for line in config['lines']['high_voltage']
 ]
 
 # Создание линий низкого напряжения
 lv_lines = [
-    Line(line['name'], config['substaion']['low_voltage'], line['breaker'])
+    Line(
+        line['name'],
+        config['substaion']['low_voltage'],
+        line['main_breakers'],
+        line['backup_breakers'],
+    )
     for line in config['lines']['low_voltage']
 ]
 
 # Создание защит
 main_protection = RelayProtection(
     config['protections'][0]['name'],
-    config['substaion']['high_voltage'],
-    config['protections'][0]['settings']
+    config['protections'][0]['settings'],
 )
 
 backup_protection = RelayProtection(
     config['protections'][1]['name'],
-    config['substaion']['high_voltage'],
     config['protections'][1]['settings']
 )
 
@@ -87,37 +95,48 @@ while i <= 10:
     
     # Случайный выбор оборудования для КЗ
     faulted_equipment = rnd.choice(equipment_list)
-    if faulted_equipment is Bus:
-        faulted_side = rnd.choice(faulted_equipment.get_sections)
+    faulted_side = None
+    if faulted_equipment is hv_bus or faulted_equipment is lv_bus:
+        faulted_side = rnd.choice(faulted_equipment.get_sections())
     voltage = faulted_equipment.get_voltage()
-    
+
     # Создание КЗ
     fault = ShortCircuit(faulted_equipment, voltage)
-    if faulted_side in globals():
+    current = fault.get_current()
+    if faulted_side:
         logging.info(
             f"Short circuit on {faulted_equipment.get_info()} on {faulted_side}"
         )
     else:
-        logging.info(f"Short circuit on {faulted_equipment.get_info()}")
+        logging.info(
+            f"Short circuit on {faulted_equipment.get_info()}"
+        )
     logging.info(fault.get_info())
+
+    # Проверка КЗ на самоустранение
     if fault.self_elimination_probability():
         logging.info("Short circuit has been eliminated by itself")
         i += 1
         continue
-    
+
     # Срабатывание защит
     main_result = RelayProtection.activation(
-        config['protections'][0]['settings']['failure_probability']
+        main_protection.get_settings()["failure_probability"],
+        current,
+        main_protection.get_settings()["current_threshold"]
     )
     logging.info(f"Main protection: {main_result}")
     if main_result:
         pass
-    
+
     if main_result == "Protection failed":
         backup_result = RelayProtection.activation(
-            config['protections'][1]['settings']['failure_probability'])
+            backup_protection.get_settings()["failure_probability"],
+            current,
+            backup_protection.get_settings()["current_threshold"]
+        )
         logging.info(f"Backup protection: {backup_result}")
-    
+
     i += 1
 
 logging.info("Simulation completed")
