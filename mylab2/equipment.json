@@ -80,7 +80,7 @@
             "name": "Backup Protection",
             "type": "Overcurrent",
             "settings": {
-                "current_threshold": 8,
+                "current_threshold": 6,
                 "failure_probability": 0.05
             }
         }

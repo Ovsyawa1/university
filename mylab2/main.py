@@ -92,22 +92,28 @@ i = 1
 
 while i <= 10:
     logging.info(f"\nIteration {i}")
-    
+
     # Случайный выбор оборудования для КЗ
     faulted_equipment = rnd.choice(equipment_list)
-    faulted_side = None
+    faulted_side = None # будет использоваться для шины
+    # если кз на шине
     if faulted_equipment is hv_bus or faulted_equipment is lv_bus:
+        # то случайным образом выбери одну из секций секцию
         faulted_side = rnd.choice(faulted_equipment.get_sections())
+    # получить номинальное напряжение элемента подстанции
     voltage = faulted_equipment.get_voltage()
 
     # Создание КЗ
     fault = ShortCircuit(faulted_equipment, voltage)
+    # Получение тока КЗ
     current = fault.get_current()
+    # Проверка на то, что элемент является шиной
     if faulted_side:
         logging.info(
             f"Short circuit on {faulted_equipment.get_info()} on {faulted_side}"
         )
     else:
+        # Для любых других элементов кроме шины
         logging.info(
             f"Short circuit on {faulted_equipment.get_info()}"
         )
@@ -117,6 +123,7 @@ while i <= 10:
     if fault.self_elimination_probability():
         logging.info("Short circuit has been eliminated by itself")
         i += 1
+        # Скип итерации
         continue
 
     # Срабатывание защит
@@ -125,18 +132,42 @@ while i <= 10:
         current,
         main_protection.get_settings()["current_threshold"]
     )
+
+    # Если КЗ на правой стороне шины, то сработает правый выключатель
+    if faulted_side == "Right Section":
+        breakers = faulted_equipment.get_main_breakers()[1]
+    else:
+        # Для любого другого случая надо брать первый элемент массива из выключателей
+        breakers = faulted_equipment.get_main_breakers()[0]
+
     logging.info(f"Main protection: {main_result}")
-    if main_result:
-        pass
-
-    if main_result == "Protection failed":
-        backup_result = RelayProtection.activation(
-            backup_protection.get_settings()["failure_probability"],
-            current,
-            backup_protection.get_settings()["current_threshold"]
+    # Если основная защита сработала, то вывести выключетели
+    if main_result == "Protection succeed":
+        logging.info(
+            f"Activated Breakers: {breakers}"
         )
-        logging.info(f"Backup protection: {backup_result}")
+        i += 1
+        continue
+    
+    # Если основная защита не сработала, то проверяем резервную
+    backup_result = RelayProtection.activation(
+        backup_protection.get_settings()["failure_probability"],
+        current,
+        backup_protection.get_settings()["current_threshold"]
+    )
 
+    if faulted_side == "Right Section":
+        breakers = faulted_equipment.get_backup_breakers()[1]
+    else:
+        breakers = faulted_equipment.get_backup_breakers()[0]
+
+    logging.info(f"Backup protection: {backup_result}")
+    if backup_result == "Protection succeed":
+        logging.info(
+            f"Activated Breakers: {breakers}"
+        )
+
+    # Если обе защиты не сработали, то в логе не выведится список выключателей
     i += 1
 
 logging.info("Simulation completed")
