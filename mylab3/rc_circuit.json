@@ -1,0 +1,33 @@
+{
+    "scheme_elements": [
+        {
+            "name": "E1",
+            "type": "E_DC",
+            "voltage": 10.0,
+            "node_1": 1,
+            "node_2": 0,
+            "branch": 1
+        },
+        {
+            "name": "R1",
+            "type": "R",
+            "resistance": 1000.0,
+            "node_1": 1,
+            "node_2": 2,
+            "branch": 2
+        },
+        {
+            "name": "C1",
+            "type": "C",
+            "capacitance": 100e-6,
+            "node_1": 2,
+            "node_2": 0,
+            "branch": 3
+        }
+    ],
+    "model_settings": {
+        "step": 1e-4,
+        "simulation_time": 0.5,
+        "show_measurements_on": "C1"
+    }
+} 

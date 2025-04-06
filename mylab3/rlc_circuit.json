@@ -1,0 +1,43 @@
+{
+    "scheme_elements": [
+        {
+            "name": "E1",
+            "type": "E_AC",
+            "voltage": 10.0,
+            "frequency": 50.0,
+            "phase": 0.0,
+            "node_1": 1,
+            "node_2": 0,
+            "branch": 1
+        },
+        {
+            "name": "R1",
+            "type": "R",
+            "resistance": 100.0,
+            "node_1": 1,
+            "node_2": 2,
+            "branch": 2
+        },
+        {
+            "name": "L1",
+            "type": "L",
+            "inductance": 0.1,
+            "node_1": 2,
+            "node_2": 3,
+            "branch": 3
+        },
+        {
+            "name": "C1",
+            "type": "C",
+            "capacitance": 100e-6,
+            "node_1": 3,
+            "node_2": 0,
+            "branch": 4
+        }
+    ],
+    "model_settings": {
+        "h": 50e-6,
+        "simulation_time": 0.1,
+        "show_measurements_on": "C1"
+    }
+} 
