@@ -58,6 +58,8 @@ def load_circuit(filename: str) -> Tuple[Dict, List[Component], int]:
 
     components = []  # массив из компонентов цепи
     nodes = set()  # множество для узлов
+    branches = set()  # множество для веток
+    elements_on_branch = {}
 
     # Создаем компоненты и собираем информацию об узлах
     for element in data['scheme_elements']:
@@ -65,17 +67,38 @@ def load_circuit(filename: str) -> Tuple[Dict, List[Component], int]:
         components.append(component)
         nodes.add(component.node_1)
         nodes.add(component.node_2)
+        branches.add(component.branch)
+        
+        # Добавляем элемент в соответствующую ветвь
+        if component.branch not in elements_on_branch:
+            elements_on_branch[component.branch] = []
+        elements_on_branch[component.branch].append(component)
 
-    return data['model_settings'], components, max(nodes) + 1
+    # print(f"Число узлов {len(nodes)}")
+    # print(f"Число ветвей {len(branches)}")
+    print(elements_on_branch)
+
+    return (
+        data['model_settings'],
+        components,
+        max(nodes) + 1,
+        elements_on_branch,
+        len(branches)
+    )
 
 
 # Моделировие переходного процесса и отображение графика
 def simulate_circuit(filename: str) -> None:
     # Загружаем схему
-    settings, components, nodes_count = load_circuit(filename)
-    solver = CircuitSolver(components, nodes_count)
+    settings, components, nodes_count, elements_on_branch, branches_count = load_circuit(filename)
+    solver = CircuitSolver(
+        components,
+        nodes_count,
+        branches_count,
+        elements_on_branch
+    )
 
-    # Параметры моделирования
+    # Параметры моделирования #
     # шаг на временность отрезке
     dt = settings['h']
     # время симуляции
@@ -84,9 +107,9 @@ def simulate_circuit(filename: str) -> None:
     monitor_component = settings['show_measurements_on']
 
     # Массивы для хранения результатов
-    time_points = []
-    voltages = []
-    currents = []
+    time_points = []  # временные точки для графика
+    voltages = []  # значения напряжения для графика
+    currents = []  # значения токов
 
     # Находим компонент для мониторинга
     monitor = None
@@ -139,7 +162,7 @@ def main():
     try:
         simulate_circuit(Path("mylab3", "rlc_circuit.json"))
     except Exception as e:
-        print(f"Ошибка при моделировании схемы: {str(e)}")
+        raise e
 
 
 if __name__ == "__main__":
